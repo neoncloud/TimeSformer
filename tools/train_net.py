@@ -111,7 +111,8 @@ def train_epoch(
             loss.backward()
             if (cur_iter + 1) % num_iters == 0:
                 for p in model.parameters():
-                    p.grad /= num_iters
+                    if p.grad is not None:
+                        p.grad /= num_iters
                 optimizer.step()
                 optimizer.zero_grad()
 
@@ -420,6 +421,15 @@ def train(cfg):
     else:
       start_epoch = 0
       cu.load_checkpoint(cfg.TRAIN.CHECKPOINT_FILE_PATH, model)
+      freezed = []
+      for name, param in model.named_parameters():
+        if 'module.model.head' in name or 'module.model.norm' in name or 'module.model.cls_token' in name:
+            continue
+        else:
+            freezed.append(name)
+            param.requires_grad_(False)
+      logger.info('The following layers are freezed:')
+      logger.info(','.join(freezed))
 
     # Create the video train and val loaders.
     train_loader = loader.construct_loader(cfg, "train")

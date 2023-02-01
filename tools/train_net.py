@@ -422,13 +422,14 @@ def train(cfg):
     else:
       start_epoch = 0
       cu.load_checkpoint(cfg.TRAIN.CHECKPOINT_FILE_PATH, model)
-      freezed = []
-      for name, param in model.named_parameters():
-        if 'head' in name: #or 'module.model.norm' in name or 'module.model.cls_token' in name:
-            continue
-        else:
-            freezed.append(name)
-            param.requires_grad_(False)
+      if cfg.TRAIN.FREEZE.ENABLE:
+        freezed = []
+        for name, param in model.named_parameters():
+            if any([layer_name in name for layer_name in cfg.TRAIN.FREEZE.DONT_FREEZE]):
+                continue
+            else:
+                freezed.append(name)
+                param.requires_grad_(False)
       logger.info('The following layers are freezed:')
       logger.info(','.join(freezed))
 

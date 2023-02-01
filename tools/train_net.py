@@ -409,6 +409,7 @@ def train(cfg):
 
     # Build the video model and print model statistics.
     model = build_model(cfg)
+    print(model)
     if du.is_master_proc() and cfg.LOG_MODEL_INFO:
         misc.log_model_info(model, cfg, use_train_input=True)
 
@@ -423,7 +424,7 @@ def train(cfg):
       cu.load_checkpoint(cfg.TRAIN.CHECKPOINT_FILE_PATH, model)
       freezed = []
       for name, param in model.named_parameters():
-        if 'module.model.head' in name or 'module.model.norm' in name or 'module.model.cls_token' in name:
+        if 'head' in name: #or 'module.model.norm' in name or 'module.model.cls_token' in name:
             continue
         else:
             freezed.append(name)

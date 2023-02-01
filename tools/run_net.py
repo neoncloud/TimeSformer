@@ -3,9 +3,10 @@
 """Wrapper to train and test a video classification model."""
 from timesformer.utils.misc import launch_job
 from timesformer.utils.parser import load_config, parse_args
-
-from tools.test_net import test
-from tools.train_net import train
+import sys
+sys.path.append('/data/personal/nus-wk/video-BETA/models/TimeSformer/tools')
+from test_net import test
+from train_net import train
 
 
 def get_func(cfg):

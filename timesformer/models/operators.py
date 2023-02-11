@@ -27,7 +27,7 @@ class SwishEfficient(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, grad_output):
-        x = ctx.saved_variables[0]
+        x = ctx.saved_tensors[0]
         sigmoid_x = torch.sigmoid(x)
         return grad_output * (sigmoid_x * (1 + x * (1 - sigmoid_x)))
 
